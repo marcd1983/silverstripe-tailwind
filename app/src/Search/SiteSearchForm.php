@@ -60,6 +60,8 @@ class SiteSearchForm extends SearchForm
             fn (string $word) => mb_strlen($word) >= self::MIN_WORD_LENGTH
         );
 
-        return implode(' ', array_map(fn (string $word) => $word . '*', array_slice(array_values($words), 0, self::MAX_WORDS)));
+        $words = array_slice(array_values(array_unique(array_map('mb_strtolower', $words))), 0, self::MAX_WORDS);
+
+        return implode(' ', array_map(fn (string $word) => $word . '*', $words));
     }
 }

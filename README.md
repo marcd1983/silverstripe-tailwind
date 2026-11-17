@@ -24,6 +24,7 @@ cp .env.example .env          # then set the passwords
 docker compose up -d --build
 docker exec silverstripe_web composer install
 docker exec silverstripe_web vendor/bin/sake db:build --flush
+docker exec silverstripe_web vendor/bin/sake db:build      # again: new tables only appear on the second run
 docker exec silverstripe_web vendor/bin/sake tasks:seed-demo-site --reset   # optional demo content
 ```
 
