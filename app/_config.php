@@ -2,7 +2,6 @@
 
 use SilverStripe\Core\Environment;
 use SilverStripe\ORM\Search\FulltextSearchable;
-
 use SilverStripe\TinyMCE\TinyMCEConfig;
 
 // The business's timezone, for every date and time the site shows or stores
@@ -32,18 +31,19 @@ $cfg = TinyMCEConfig::get('cms');
 // Menubar + toolbars (you can tweak order)
 // $cfg->setOption('menubar', 'file edit view insert format tools table help');
 
-$cfg->setButtonsForLine(1,
+// One group per row: separators ('|') split the toolbar into button groups
+$cfg->setButtonsForLine(1, [
     'bold', 'italic', 'underline', 'strikethrough', '|',
     'forecolor', 'backcolor', '|',
     'bullist', 'numlist', 'outdent', 'indent', '|',
-    'alignleft', 'aligncenter', 'alignright', 'alignjustify', '|'
-);
+    'alignleft', 'aligncenter', 'alignright', 'alignjustify', '|',
+]);
 
-$cfg->setButtonsForLine(2,
+$cfg->setButtonsForLine(2, [
     'blocks styles', 'table', 'sslink', 'unlink', 'ssmedia', 'ssembed', '|',
     'emoticons', 'pagebreak', 'nonbreaking', '|',
-    'code', 'preview', 'removeformat', 'visualblocks', 'visualchars', 'searchreplace', 'fullscreen', 'help'
-);
+    'code', 'preview', 'removeformat', 'visualblocks', 'visualchars', 'searchreplace', 'fullscreen', 'help',
+]);
 
 // Quickbars (contextual toolbars on selection / at caret)
 $cfg->setOption('quickbars_selection_toolbar', 'bold italic underline | forecolor backcolor | link | removeformat');

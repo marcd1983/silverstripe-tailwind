@@ -9,7 +9,7 @@ class ServiceHolderPageController extends PageController
 {
     private static $allowed_actions = [];
 
-    public function getServices():DataList
+    public function getServices(): DataList
     {
         return ServicePage::get()->sort([
             'SortOrder' => 'ASC',

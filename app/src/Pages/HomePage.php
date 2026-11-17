@@ -2,9 +2,9 @@
 
 namespace {
 
- 
-use Services\ServicePage;
-use SilverStripe\ORM\DataList;
+
+    use Services\ServicePage;
+    use SilverStripe\ORM\DataList;
 
     class HomePage extends Page
     {
@@ -13,8 +13,7 @@ use SilverStripe\ORM\DataList;
         private static $cms_icon_class = 'font-icon-home';
 
         private static $has_one = [];
-
     }
 
-   
+
 }

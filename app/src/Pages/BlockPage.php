@@ -50,7 +50,7 @@ namespace {
 
               $fields->removeByName(['SidebarPosition']);
 
-          $fields->addFieldToTab('Root.Sidebar', DropdownField::create('SidebarPosition', 'Sidebar position', [
+            $fields->addFieldToTab('Root.Sidebar', DropdownField::create('SidebarPosition', 'Sidebar position', [
                 'none'  => 'None (no sidebar)',
                 'left'  => 'Left',
                 'right' => 'Right',

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Extensions;
 
 use SilverStripe\Core\Extension;
@@ -21,22 +22,17 @@ use App\Schema\SchemaProvider;
 class PageSeoExtension extends Extension
 {
     private static $db = [];
-
-
     public function updateCMSFields(FieldList $fields): void
     {
-
     }
 
     public function SchemaJSON(): string
     {
         $page = $this->owner;
-
         $graph = [];
         $conf  = SiteConfig::current_site_config();
         $base  = rtrim(Director::absoluteBaseURL(), '/') . '/';
-
-        // 1) Organization (global, from SiteConfigExtension). hasMethod() rather
+// 1) Organization (global, from SiteConfigExtension). hasMethod() rather
         //    than method_exists(): the method is added by an extension.
         $hasOrg = false;
         if ($conf && $conf->hasMethod('getOrganizationSchemaNode')) {
@@ -65,34 +61,32 @@ class PageSeoExtension extends Extension
             $website['publisher'] = ['@id' => $base . '#org'];
         }
         $graph[] = $website;
-
-        // 3) Breadcrumbs (fallback if getBreadcrumbItems isn’t available)
+// 3) Breadcrumbs (fallback if getBreadcrumbItems isn’t available)
         $items = [];
         $pos   = 0;
-
         if (method_exists($page, 'getBreadcrumbItems')) {
             $crumbs = $page->getBreadcrumbItems(20, null, true);
             if ($crumbs && $crumbs->count()) {
-                // Ensure "Home" first
+        // Ensure "Home" first
                 $homeURL = $base;
                 $first   = $crumbs->first();
                 if (!$first || rtrim($first->AbsoluteLink(), '/') !== rtrim($homeURL, '/')) {
-                    $items[] = ['@type'=>'ListItem','position'=>++$pos,'name'=>'Home','item'=>$homeURL];
+                    $items[] = ['@type' => 'ListItem','position' => ++$pos,'name' => 'Home','item' => $homeURL];
                 }
                 foreach ($crumbs as $node) {
                     $items[] = [
-                        '@type'    => 'ListItem',
-                        'position' => ++$pos,
-                        'name'     => $node->Title,
-                        'item'     => rtrim($node->AbsoluteLink(), '/') . '/',
+                    '@type'    => 'ListItem',
+                    'position' => ++$pos,
+                    'name'     => $node->Title,
+                    'item'     => rtrim($node->AbsoluteLink(), '/') . '/',
                     ];
                 }
             }
         } else {
-            // Minimal fallback: Home + current page
+        // Minimal fallback: Home + current page
             $items = [
-                ['@type'=>'ListItem','position'=>++$pos,'name'=>'Home','item'=>$base],
-                ['@type'=>'ListItem','position'=>++$pos,'name'=>$page->Title, 'item'=>rtrim($page->AbsoluteLink(), '/') . '/'],
+                ['@type' => 'ListItem','position' => ++$pos,'name' => 'Home','item' => $base],
+                ['@type' => 'ListItem','position' => ++$pos,'name' => $page->Title, 'item' => rtrim($page->AbsoluteLink(), '/') . '/'],
             ];
         }
 
@@ -123,10 +117,8 @@ class PageSeoExtension extends Extension
         // 5) Extension hook
         $pageAbsURL = rtrim($page->AbsoluteLink(), '/') . '/';
         $page->extend('updateSchemaGraph', $graph, $pageAbsURL);
-
-        // 6) Clean + emit
+// 6) Clean + emit
         $graph = array_values(array_filter($graph, fn($n) => is_array($n) && array_filter($n)));
-
         return \App\Schema\Schema::json([
             '@context' => 'https://schema.org',
             '@graph'   => $graph,

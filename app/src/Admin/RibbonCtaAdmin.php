@@ -27,4 +27,3 @@ class RibbonCtaAdmin extends ModelAdmin
         return $form;
     }
 }
-

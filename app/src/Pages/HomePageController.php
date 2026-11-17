@@ -42,7 +42,7 @@ namespace {
                     'Title'     => 'ASC',
                 ]);
         }
-    
+
         /**
          * Returns ShowOnHome services newest/highest sort order first.
          */
@@ -55,7 +55,7 @@ namespace {
                     'Title'     => 'DESC',
                 ]);
         }
- 
+
         /**
          * Returns featured services only — useful for a spotlight section.
          */

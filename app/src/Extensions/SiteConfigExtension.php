@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Extensions;
 
 use SilverStripe\Core\Extension;
@@ -32,7 +33,7 @@ class SiteConfigExtension extends Extension
     ];
 
     public function updateCMSFields(FieldList $fields): void
-    {   
+    {
         $fields->addFieldsToTab('Root.Main', [
             UploadField::create('SiteLogo', 'Site logo')
             ->setFolderName('Uploads/SiteLogo'),
@@ -112,5 +113,4 @@ class SiteConfigExtension extends Extension
 
         return 'https://x.com/' . ltrim($value, '@');
     }
-
 }

@@ -114,7 +114,7 @@ class ElementServices extends BaseElement
             $this->introField($fields);
 
             if ($this->isInDB()) {
-                $grid =GridField::create('Services', _t(__CLASS__ . '.Services', 'Services'), $this->Services()->sort('SortOrder'));
+                $grid = GridField::create('Services', _t(__CLASS__ . '.Services', 'Services'), $this->Services()->sort('SortOrder'));
                 $grid->getConfig()
                     ->removeComponentsByType([
                         GridFieldAddExistingAutocompleter::class,

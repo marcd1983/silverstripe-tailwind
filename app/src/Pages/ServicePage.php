@@ -1,6 +1,7 @@
 <?php
 
 namespace Services;
+
 use Page;
 use SilverStripe\Assets\Image;
 use SilverStripe\AssetAdmin\Forms\UploadField;
@@ -13,7 +14,7 @@ class ServicePage extends Page
     private static $table_name = 'ServicePage';
 
     private static string $singular_name = 'Service Page';
- 
+
     private static string $plural_name = 'Service Pages';
 
     private static $description = 'Individual service detail page';
@@ -37,7 +38,7 @@ class ServicePage extends Page
         'ServiceImage' => Image::class,
     ];
 
-    private static  $owns = [
+    private static $owns = [
         'ServiceImage',
     ];
 
@@ -68,7 +69,7 @@ class ServicePage extends Page
                 ->setAllowedFileCategories('image/supported')
                 ->setFolderName('Uploads/Service Image'),
 
-        ],'ElementalArea');
+        ], 'ElementalArea');
 
         return $fields;
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Extensions;
 
 use SilverStripe\Core\Extension;
@@ -50,7 +51,7 @@ class MegaMenuExtension extends Extension
             'List'     => 'Lists (link columns)',
             'Gallery'  => 'Gallery (image grid)',
             'Tabs'     => 'Tabs (with product images)',
-            
+
         ]);
 
         // Only List and Gallery lay their children out in columns -- Tabs

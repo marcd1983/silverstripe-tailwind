@@ -96,10 +96,9 @@ class ElementFeatures extends BaseElement
         return parent::getCMSFields();
     }
 
-  
+
     public function getType()
     {
         return _t(__CLASS__ . '.BlockType', 'Features');
     }
-
 }
