@@ -52,7 +52,8 @@
         "colymba/gridfield-bulk-editing-tools": "^5.0",
         "dynamic/silverstripe-elemental-embedded-code": "^4.0",
         "sunnysideup/cms-dark-theme": "*",
-        "cweagans/composer-patches": "^2.0"
+        "cweagans/composer-patches": "^2.0",
+        "antlion/silverwind-site": "dev-main as 1.0.x-dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5",
@@ -70,6 +71,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/marcd1983/store-location.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/marcd1983/silverwind-site.git"
         }
     ],
     "scripts": {

@@ -1,8 +1,8 @@
 <?php
 
 namespace {
-    use Antlion\ElementAccordion\Elements\ElementAccordion;
-    use Antlion\ElementMenu\Elements\ElementMenu;
+    use Antlion\SilverwindBlocks\Elements\ElementAccordion;
+    use Antlion\SilverwindBlocks\Elements\ElementMenu;
     use DNADesign\Elemental\Forms\ElementalAreaField;
     use DNADesign\Elemental\Models\ElementalArea;
     use DNADesign\Elemental\Models\ElementContent;
