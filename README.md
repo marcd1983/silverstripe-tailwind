@@ -81,6 +81,7 @@ again. Credits are listed at the end of the About page.
 
 ```sh
 docker exec silverstripe_web vendor/bin/phpunit          # PHP tests (app/tests)
+docker exec silverstripe_web vendor/bin/phpunit vendor/antlion/store-location/tests   # a module's own tests
 docker exec silverstripe_web vendor/bin/phpcs            # coding standard (phpcs.xml.dist)
 cd tests/e2e && npm install && npx playwright test       # screenshots + accessibility
 ```
