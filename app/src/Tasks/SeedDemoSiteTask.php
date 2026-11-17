@@ -16,6 +16,8 @@ use Antlion\StoreLocation\Pages\StoreLocationPage;
 use App\Models\Partner;
 use App\Models\RibbonCta;
 use App\Models\SiteScript;
+use App\Demo\DemoImages;
+use NSWDPC\Elemental\Models\Image\ElementImage;
 use App\Models\Testimony;
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
@@ -67,7 +69,10 @@ use Symfony\Component\Console\Input\InputOption;
  * services, about-us, contact-us; restorable from the CMS archive), deletes
  * the demo library records, and applies the demo settings and menus.
  *
- *   vendor/bin/sake tasks:seed-demo-site [--reset]
+ *   vendor/bin/sake tasks:seed-demo-site [--reset] [--refresh-images]
+ *
+ * Photos come from Pixabay when PIXABAY_API_KEY is set (App\Demo\DemoImages),
+ * otherwise generated placeholders.
  *   /dev/tasks/seed-demo-site?reset=1
  */
 class SeedDemoSiteTask extends BuildTask
@@ -95,10 +100,28 @@ class SeedDemoSiteTask extends BuildTask
 
     private bool $reset = false;
 
+    private DemoImages $images;
+
+    /** Image search per slot (app/demo/images.json records the chosen photo IDs) */
+    private const array IMAGE_QUERIES = [
+        'home-hero' => ['landscaped garden lawn path', 'A landscaped garden with a lawn and stone path'],
+        'card-design' => ['landscape design garden', 'A designed garden with a pond and clipped shrubs'],
+        'card-crew' => ['gardener working garden', 'A gardener at work'],
+        'card-guarantee' => ['stone garden steps', 'Stone garden steps'],
+        'about' => ['garden plants nursery', 'Young plants ready for planting'],
+        'service-garden-design' => ['formal garden landscaping', 'A formal landscaped garden'],
+        'service-patios-and-paving' => ['stone patio garden', 'A stone patio in a garden'],
+        'service-planting-and-lawns' => ['flower border garden', 'A colourful flower border'],
+        'service-decking-and-fencing' => ['wooden deck garden terrace', 'A courtyard with wooden decking and planters'],
+        'service-outdoor-lighting' => ['garden lights night', 'A garden lit at night'],
+        'service-garden-maintenance' => ['lawn mowing', 'A freshly mown lawn'],
+    ];
+
     public function getOptions(): array
     {
         return [
             new InputOption('reset', null, InputOption::VALUE_NONE, 'Archive existing pages at the demo URLs and replace demo library records, settings and menus'),
+            new InputOption('refresh-images', null, InputOption::VALUE_NONE, 'Download the demo photos again (same photos, from app/demo/images.json)'),
         ];
     }
 
@@ -111,6 +134,14 @@ class SeedDemoSiteTask extends BuildTask
 
         $this->output = $output;
         $this->reset = (bool) $input->getOption('reset');
+        $this->images = new DemoImages(fn (string $line) => $this->say($line));
+        $this->say($this->images->hasApiKey()
+            ? 'Demo photos: Pixabay (PIXABAY_API_KEY set)'
+            : 'Demo photos: placeholders (set PIXABAY_API_KEY in .env for real photos)');
+        if ($input->getOption('refresh-images')) {
+            $this->images->refresh();
+            $this->refreshUsedImages();
+        }
 
         if ($this->reset) {
             $this->say('Resetting: archiving demo pages and removing demo library records');
@@ -138,6 +169,8 @@ class SeedDemoSiteTask extends BuildTask
         $contact = $this->contactPage();
         $this->locationsPage();
         $home = $this->homePage();
+        $this->photoCredits($about);
+        $this->images->save();
 
         // Ribbon buttons point at pages, so they're added once the pages exist
         if ($contact) {
@@ -176,6 +209,12 @@ class SeedDemoSiteTask extends BuildTask
             'Height' => 'medium',
             'HorizontalAlignment' => 'left',
             'BackgroundColor' => '#1f3d2b',
+            'BackgroundImageID' => $this->imageID('home-hero'),
+            'OverlayType' => 'gradient',
+            'GradientDirection' => 'right',
+            'GradientStartColor' => '#10261a',
+            'GradientStartOpacity' => 85,
+            'GradientEndOpacity' => 15,
             'ButtonSize' => 'lg',
         ], fn (ElementHero $hero) => $this->addLinks($hero, [
             $this->pageLink('services', 'Our services', 'accent'),
@@ -201,15 +240,18 @@ class SeedDemoSiteTask extends BuildTask
             'BackgroundColor' => '#f3f0e7',
         ], function (ElementSection $section) {
             $cards = [
-                'Designed around you' => 'We start with how you actually use your outdoor space: kids, dogs, dinners, or quiet mornings. Then we design for that.',
-                'Built by our own crew' => 'No subcontractor roulette. The people who quote your job are the people who build it.',
-                'Guaranteed for five years' => 'All hard landscaping carries a five-year workmanship guarantee, and planting is covered for its first full season.',
+                // title => [text, image slot]
+                'Designed around you' => ['We start with how you actually use your outdoor space: kids, dogs, dinners, or quiet mornings. Then we design for that.', 'card-design'],
+                'Built by our own crew' => ['No subcontractor roulette. The people who quote your job are the people who build it.', 'card-crew'],
+                'Guaranteed for five years' => ['All hard landscaping carries a five-year workmanship guarantee, and planting is covered for its first full season.', 'card-guarantee'],
             ];
-            foreach ($cards as $title => $text) {
+            foreach ($cards as $title => [$text, $slot]) {
                 $this->nestedBlock($this->area($section, 'Elements'), ElementCard::class, [
                     'Title' => $title,
                     'Content' => "<p>{$text}</p>",
                     'CardStyle' => 'vertical',
+                    'ImageID' => $this->imageID($slot),
+                    'ImageRatio' => '3x2',
                 ]);
             }
         });
@@ -302,6 +344,7 @@ class SeedDemoSiteTask extends BuildTask
                 'ShowOnHome' => $featured,
                 'SortOrder' => $i + 1,
                 'MetaDescription' => $summary,
+                'ServiceImageID' => $this->imageID('service-' . singleton(SiteTree::class)->generateURLSegment($title)),
             ]);
             if (!$page) {
                 continue;
@@ -335,6 +378,13 @@ class SeedDemoSiteTask extends BuildTask
             'HTML' => '<p class="lead">Fernbrook started in 2009 with one van, one mower and a habit of saying yes to the jobs nobody else wanted.</p>'
                 . '<p>Fifteen years on we\'re a team of fourteen: designers, builders, carpenters and gardeners who all work for us directly. That\'s still the thing we\'re proudest of. When you hire Fernbrook, you get the same people from the first visit to the final walk-round.</p>'
                 . '<h2>How we work</h2><p>We take on a limited number of build projects each season so every garden gets a lead builder on site every day. Between builds, our maintenance team looks after more than two hundred gardens across the area.</p>',
+        ]);
+
+        $this->block($about, ElementImage::class, [
+            'Title' => 'In the nursery',
+            'ShowTitle' => false,
+            'ImageID' => $this->imageID('about'),
+            'Height' => 'medium',
         ]);
 
         $this->block($about, ElementPartners::class, [
@@ -535,6 +585,66 @@ class SeedDemoSiteTask extends BuildTask
                 ...$extra,
             ])->write();
         }
+    }
+
+    /** --refresh-images: re-download every slot now, so existing pages get the new files too */
+    private function refreshUsedImages(): void
+    {
+        foreach (array_keys(self::IMAGE_QUERIES) as $slot) {
+            $this->imageID($slot);
+        }
+        $this->images->refresh(false);
+    }
+
+    /** A demo image's ID for a slot in IMAGE_QUERIES (0 if it couldn't be made) */
+    private function imageID(string $slot): int
+    {
+        [$query, $alt] = self::IMAGE_QUERIES[$slot];
+
+        return (int) $this->images->get($slot, $query, $alt)?->ID;
+    }
+
+    /**
+     * Pixabay credits at the end of About, for the photos actually used,
+     * kept in line with app/demo/images.json.
+     */
+    private function photoCredits(?SiteTree $about): void
+    {
+        $credits = array_intersect_key($this->images->credits(), self::IMAGE_QUERIES);
+        if (!$about || !$credits || !$about->ElementalAreaID) {
+            return;
+        }
+
+        $items = '';
+        foreach ($credits as $credit) {
+            $items .= sprintf(
+                '<li><a href="%s">Photo #%d</a> by <a href="%s">Pixabay user %s</a></li>',
+                htmlspecialchars($credit['pageURL']),
+                $credit['id'],
+                htmlspecialchars($credit['userURL']),
+                htmlspecialchars($credit['user'])
+            );
+        }
+        $html = '<p><small>Demo photos from <a href="https://pixabay.com/">Pixabay</a>:</small></p><ul class="text-sm">' . $items . '</ul>';
+
+        // Kept current when photos change (e.g. a new pick in app/demo/images.json)
+        $existing = ElementContent::get()->filter(['ParentID' => $about->ElementalAreaID, 'Title' => 'Photo credits'])->first();
+        if ($existing) {
+            if ($existing->HTML !== $html) {
+                $existing->HTML = $html;
+                $existing->write();
+                $existing->publishRecursive();
+                $this->say('  Updated photo credits on About');
+            }
+            return;
+        }
+        $this->block($about, ElementContent::class, [
+            'Title' => 'Photo credits',
+            'ShowTitle' => false,
+            'BlockWidth' => 'narrow',
+            'HTML' => $html,
+        ]);
+        $this->publish($about);
     }
 
     // ---- Library records --------------------------------------------------------

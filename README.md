@@ -25,8 +25,11 @@ docker compose up -d --build
 docker exec silverstripe_web composer install
 docker exec silverstripe_web vendor/bin/sake db:build --flush
 docker exec silverstripe_web vendor/bin/sake db:build      # again: new tables only appear on the second run
-docker exec silverstripe_web vendor/bin/sake tasks:seed-demo-site --reset   # optional demo content
+docker exec -u www-data silverstripe_web vendor/bin/sake tasks:seed-demo-site --reset   # optional demo content
 ```
+
+Run `sake` tasks as the web user (`-u www-data`): files a task creates as root
+(images, resized copies) can't be written to by the web server afterwards.
 
 | Service | URL |
 |---|---|
@@ -66,6 +69,13 @@ Landscapes": block-built pages, services, ribbon CTAs, testimonials,
 partners, two store locations with hours and staff, footer menus and brand
 colours. It only adds what's missing; `--reset` archives the demo pages
 (restorable from the CMS archive) and rebuilds everything.
+
+**Photos** come from [Pixabay](https://pixabay.com/) when `PIXABAY_API_KEY`
+is set in `.env` (a free key), otherwise from generated placeholders. The
+first run picks a photo per slot and records it in `app/demo/images.json`
+(commit it), so every seed and every teammate gets the same photos; images are
+downloaded into `assets/Demo` and reused. `--refresh-images` downloads them
+again. Credits are listed at the end of the About page.
 
 ## Checks
 
