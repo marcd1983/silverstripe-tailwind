@@ -23,13 +23,18 @@ cd silverstripe-tailwind
 cp .env.example .env          # then set the passwords
 docker compose up -d --build
 docker exec silverstripe_web composer install
-docker exec silverstripe_web vendor/bin/sake db:build --flush
-docker exec silverstripe_web vendor/bin/sake db:build      # again: new tables only appear on the second run
+docker exec -u www-data silverstripe_web vendor/bin/sake db:build --flush
+docker exec -u www-data silverstripe_web vendor/bin/sake db:build      # again: new tables only appear on the second run
 docker exec -u www-data silverstripe_web vendor/bin/sake tasks:seed-demo-site --reset   # optional demo content
 ```
 
-Run `sake` tasks as the web user (`-u www-data`): files a task creates as root
-(images, resized copies) can't be written to by the web server afterwards.
+Run `sake` (and `phpunit`) as the web user, `-u www-data`:
+
+- files a task creates as root (images, resized copies) can't be written to
+  by the web server afterwards, and
+- Silverstripe keeps a config cache per system user, so a `db:build --flush`
+  as root leaves the web user's cache stale (e.g. new database columns
+  silently not saved).
 
 | Service | URL |
 |---|---|
@@ -66,7 +71,7 @@ does nothing.
 
 `vendor/bin/sake tasks:seed-demo-site` builds a demo site for "Fernbrook
 Landscapes": block-built pages, services, ribbon CTAs, testimonials,
-partners, two store locations with hours and staff, footer menus and brand
+partners, three store locations (with a store locator map) with hours and staff, footer menus and brand
 colours. It only adds what's missing; `--reset` archives the demo pages
 (restorable from the CMS archive) and rebuilds everything.
 
@@ -80,8 +85,8 @@ again. Credits are listed at the end of the About page.
 ## Checks
 
 ```sh
-docker exec silverstripe_web vendor/bin/phpunit          # PHP tests (app/tests)
-docker exec silverstripe_web vendor/bin/phpunit vendor/antlion/store-location/tests   # a module's own tests
+docker exec -u www-data silverstripe_web vendor/bin/phpunit          # PHP tests (app/tests)
+docker exec -u www-data silverstripe_web vendor/bin/phpunit vendor/antlion/store-location/tests   # a module's own tests
 docker exec silverstripe_web vendor/bin/phpcs            # coding standard (phpcs.xml.dist)
 cd tests/e2e && npm install && npx playwright test       # screenshots + accessibility
 ```

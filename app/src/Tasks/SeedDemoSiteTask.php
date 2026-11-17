@@ -58,7 +58,8 @@ use Symfony\Component\Console\Input\InputOption;
  *             and six Service pages
  *   About     story text + partner cards
  *   Contact   details + a userforms enquiry form; footer ribbon turned off
- *   Locations two yards (antlion/store-location): hours, holidays, departments, staff
+ *   Locations three yards on a store locator map (antlion/store-location):
+ *             hours, holidays, departments, staff
  *   Scripts   a demo analytics stand-in, gated by cookie consent
  *   Library   two Ribbon CTAs (one is the site-wide footer ribbon), partners,
  *             testimonies; footer menus; site name, tagline and brand colours
@@ -470,6 +471,9 @@ class SeedDemoSiteTask extends BuildTask
                 'Notes' => 'Free parking in the yard. Design consultations by appointment.',
                 // Loads only after consent to the "External" cookie group (store-location map_consent_group)
                 'MapEmbedURL' => 'https://www.google.com/maps?q=Westbrook%2C+OR&output=embed',
+                // Coordinates set here, so seeding never calls the geocoder (demo addresses are fictional)
+                'Latitude' => 45.4871,
+                'Longitude' => -122.8037,
                 '_departments' => ['Design', 'Construction', 'Maintenance'],
                 '_saturday' => ['09:00:00', '13:00:00'],
             ],
@@ -484,8 +488,25 @@ class SeedDemoSiteTask extends BuildTask
                 'Phone' => '(555) 014-2291',
                 'Email' => 'oldtown@fernbrook.example',
                 'Notes' => 'Plants, paving samples and maintenance plan sign-ups.',
+                'Latitude' => 45.5231,
+                'Longitude' => -122.6765,
                 '_departments' => ['Maintenance'],
                 '_saturday' => ['09:00:00', '16:00:00'],
+            ],
+            [
+                'Title' => 'Riverside Depot',
+                'LocationName' => 'Fernbrook Riverside Depot',
+                'Address' => '88 Wharf Street',
+                'City' => 'Riverside',
+                'State' => 'OR',
+                'Zip' => '97003',
+                'Phone' => '(555) 014-2292',
+                'Email' => 'riverside@fernbrook.example',
+                'Notes' => 'Bulk materials: soil, gravel and mulch by the bag or the tonne.',
+                'Latitude' => 45.4984,
+                'Longitude' => -122.4313,
+                '_departments' => ['Construction'],
+                '_saturday' => ['08:00:00', '12:00:00'],
             ],
         ];
 
@@ -964,7 +985,7 @@ class SeedDemoSiteTask extends BuildTask
                 $member->delete();
             }
             // Schedules are created per location page and aren't cascade-deleted
-            foreach (StoreSchedule::get()->filter('Title', ['Westbrook Yard Schedule', 'Old Town Garden Centre Schedule']) as $schedule) {
+            foreach (StoreSchedule::get()->filter('Title', ['Westbrook Yard Schedule', 'Old Town Garden Centre Schedule', 'Riverside Depot Schedule']) as $schedule) {
                 foreach ([...$schedule->Hours(), ...$schedule->HolidayHours()] as $row) {
                     $row->delete();
                 }
