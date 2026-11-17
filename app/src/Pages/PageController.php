@@ -1,7 +1,7 @@
 <?php
 
     use SilverStripe\CMS\Controllers\ContentController;
-    use SilverStripe\CMS\Search\SearchForm;
+    use App\Search\SiteSearchForm;
     use SilverStripe\View\Requirements;
     use SilverStripe\Forms\FieldList;
     use SilverStripe\Forms\TextField;
@@ -11,7 +11,6 @@
     use SilverStripe\Forms\Form;
     use SilverStripe\Forms\FormAction;
     use SilverStripe\Forms\Validation\RequiredFieldsValidator;
-    use SilverStripe\ORM\Search\FulltextSearchable;
     use SilverStripe\Core\Validation\ValidationResult;
     use SilverStripe\Control\Email\Email;
     use SilverStripe\Control\Director;
@@ -19,6 +18,7 @@
     use SilverStripe\Model\List\ArrayList;
     use App\Models\FormSubmission;
     use SilverStripe\ORM\FieldType\DBDatetime;
+    use SilverStripe\ORM\FieldType\DBHTMLText;
     use Antlion\StoreLocation\Pages\StoreLocationPage;
 
 class PageController extends ContentController
@@ -31,9 +31,10 @@ class PageController extends ContentController
 
     /**
      * Overrides ContentControllerSearchExtension::SearchForm() (added by
-     * FulltextSearchable::enable(), see app/_config.php) purely to style
-     * the field/button with daisyUI join classes -- markup for the
-     * wrapper itself lives in Includes/Nav/SearchForm.ss.
+     * FulltextSearchable::enable(), see app/_config.php) to also search the
+     * text of a page's blocks (App\Search\SiteSearchForm), and to style the
+     * field/button with daisyUI join classes -- markup for the wrapper
+     * itself lives in Includes/Nav/SearchForm.ss.
      */
     public function SearchForm()
     {
@@ -56,10 +57,8 @@ class PageController extends ContentController
                 ->addExtraClass('btn btn-primary join-item')
         );
 
-        $form = SearchForm::create($this, 'SearchForm', $fields, $actions);
-        $form->classesToSearch(FulltextSearchable::get_searchable_classes());
-
-        return $form;
+        // Searches page fields and block text (Page.SearchText)
+        return SiteSearchForm::create($this, 'SearchForm', $fields, $actions);
     }
 
     protected function init()
@@ -69,6 +68,15 @@ class PageController extends ContentController
         Requirements::block('silverstripe/userforms:client/dist/js/jquery.min.js');
         Requirements::block('innoweb/silverstripe-cookie-consent:client/dist/css/cookieconsent.css');
         // CSS/JS come from the theme's templates (silverwind: dist/ via themedCSS/themedJavascript)
+    }
+
+    /**
+     * Theme hook: third-party scripts from Settings > Scripts for one
+     * placement (head, body-start, body-end), gated by cookie consent.
+     */
+    public function SiteScripts(string $placement): DBHTMLText
+    {
+        return SiteConfig::current_site_config()->ScriptsFor($placement);
     }
 
     public function ContactForm(): Form

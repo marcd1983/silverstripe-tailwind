@@ -15,6 +15,7 @@ use Antlion\StoreLocation\Pages\StoreLocationHolderPage;
 use Antlion\StoreLocation\Pages\StoreLocationPage;
 use App\Models\Partner;
 use App\Models\RibbonCta;
+use App\Models\SiteScript;
 use App\Models\Testimony;
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
@@ -22,7 +23,9 @@ use DNADesign\Elemental\Models\ElementContent;
 use DNADesign\ElementalUserForms\Model\ElementForm;
 use DNADesign\SetMenu\Model\MenuSet;
 use Elements\ElementRibbonCta;
+use Elements\ElementPartners;
 use Elements\ElementServices;
+use Elements\ElementTestimonials;
 use HomePage;
 use Page;
 use Services\ServiceHolderPage;
@@ -48,12 +51,13 @@ use Symfony\Component\Console\Input\InputOption;
  * Seeds a small, complete demo site for a fictional landscaping company,
  * "Fernbrook Landscapes", using this project's own building blocks:
  *
- *   Home      Hero (h1) · featured Services · "Why us" Section of Cards · FAQ Accordion
+ *   Home      Hero (h1) · featured Services · "Why us" Section of Cards · Testimonials · FAQ Accordion
  *   Services  holder with every service as a grid + a scheduled Ribbon CTA block,
  *             and six Service pages
- *   About     story text
+ *   About     story text + partner cards
  *   Contact   details + a userforms enquiry form; footer ribbon turned off
  *   Locations two yards (antlion/store-location): hours, holidays, departments, staff
+ *   Scripts   a demo analytics stand-in, gated by cookie consent
  *   Library   two Ribbon CTAs (one is the site-wide footer ribbon), partners,
  *             testimonies; footer menus; site name, tagline and brand colours
  *
@@ -77,6 +81,8 @@ class SeedDemoSiteTask extends BuildTask
     private const string PHONE = '(555) 014-2290';
 
     private const string EMAIL = 'hello@fernbrook.example';
+
+    private const string DEMO_SCRIPT = 'Demo analytics (console message)';
 
     /** store-location departments: title => email */
     private const array DEPARTMENTS = [
@@ -144,6 +150,7 @@ class SeedDemoSiteTask extends BuildTask
 
         $this->partners();
         $this->testimonies();
+        $this->demoScript();
         $this->settings($consultation);
         $this->menus($services, $about, $contact);
 
@@ -206,6 +213,13 @@ class SeedDemoSiteTask extends BuildTask
                 ]);
             }
         });
+
+        // Quotes come from the Testimonies admin (seeded below), so "all" picks them up
+        $this->block($home, ElementTestimonials::class, [
+            'Title' => 'What our clients say',
+            'Source' => 'all',
+            'Appearance' => 'carousel',
+        ]);
 
         $this->block($home, ElementAccordion::class, [
             'Title' => 'Common questions',
@@ -323,6 +337,16 @@ class SeedDemoSiteTask extends BuildTask
                 . '<h2>How we work</h2><p>We take on a limited number of build projects each season so every garden gets a lead builder on site every day. Between builds, our maintenance team looks after more than two hundred gardens across the area.</p>',
         ]);
 
+        $this->block($about, ElementPartners::class, [
+            'Title' => 'Who we work with',
+            'Intro' => '<p>Local suppliers we\'ve relied on for years, for stone, plants and lighting.</p>',
+            'Source' => 'all',
+            'Display' => 'cards',
+            'ColumnsSmall' => 1,
+            'ColumnsMedium' => 3,
+            'ColumnsLarge' => 3,
+        ]);
+
         return $this->publish($about);
     }
 
@@ -394,6 +418,8 @@ class SeedDemoSiteTask extends BuildTask
                 'Phone' => self::PHONE,
                 'Email' => 'westbrook@fernbrook.example',
                 'Notes' => 'Free parking in the yard. Design consultations by appointment.',
+                // Loads only after consent to the "External" cookie group (store-location map_consent_group)
+                'MapEmbedURL' => 'https://www.google.com/maps?q=Westbrook%2C+OR&output=embed',
                 '_departments' => ['Design', 'Construction', 'Maintenance'],
                 '_saturday' => ['09:00:00', '13:00:00'],
             ],
@@ -561,6 +587,27 @@ class SeedDemoSiteTask extends BuildTask
         foreach ($quotes as $title => $quote) {
             $this->libraryRecord(Testimony::class, $title, ['Testimony' => $quote, 'SortOrder' => $sort++]);
         }
+    }
+
+    /**
+     * A harmless stand-in for an analytics snippet (Settings > Scripts), so
+     * the demo shows consent gating: it only runs after the visitor accepts
+     * "Analytics" in the cookie banner.
+     */
+    private function demoScript(): void
+    {
+        $config = SiteConfig::current_site_config();
+        if ($config->Scripts()->filter('Title', self::DEMO_SCRIPT)->exists()) {
+            return;
+        }
+        $config->Scripts()->add(SiteScript::create([
+            'Title' => self::DEMO_SCRIPT,
+            'Placement' => 'head',
+            'ConsentGroup' => 'Analytics',
+            'Code' => "<script>\n  // Stand-in for an analytics snippet: runs only after consent to Analytics\n"
+                . "  window.fernbrookAnalytics = true;\n  console.info('Demo analytics loaded (Analytics consent given)');\n</script>",
+        ]));
+        $this->say("  Added script '" . self::DEMO_SCRIPT . "' (Settings > Scripts, Analytics group)");
     }
 
     private function libraryRecord(string $class, string $title, array $fields): void
@@ -798,6 +845,9 @@ class SeedDemoSiteTask extends BuildTask
             Partner::class => ['Northstone Quarries', 'Greenroot Nurseries', 'Lumen Garden Lighting'],
             Testimony::class => ['Priya & Tom, Westbrook', 'Margaret L., Old Town', 'The Okafor family'],
         ];
+        foreach (SiteScript::get()->filter('Title', self::DEMO_SCRIPT) as $script) {
+            $script->delete();
+        }
         if (class_exists(StoreDepartment::class)) {
             $titles[StoreDepartment::class] = array_keys(self::DEPARTMENTS);
             foreach (StaffMember::get()->filter('Email', ['alex@fernbrook.example', 'sam@fernbrook.example', 'jo@fernbrook.example', 'ravi@fernbrook.example']) as $member) {

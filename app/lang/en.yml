@@ -15,10 +15,7 @@ en:
   App\Extensions\RibbonCtaExtension:
     has_one_RibbonCta: 'Ribbon cta'
   App\Extensions\SiteConfigExtension:
-    db_BodyScripts: 'Body scripts'
     db_Facebook: Facebook
-    db_FooterScripts: 'Footer scripts'
-    db_HeadScripts: 'Head scripts'
     db_Instagram: Instagram
     db_LinkedIn: 'Linked in'
     db_Twitter: Twitter

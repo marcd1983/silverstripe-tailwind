@@ -5,20 +5,21 @@ namespace App\Extensions;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use App\Models\SiteScript;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
-use SilverStripe\LinkField\Form\MultiLinkField;
-use SilverStripe\LinkField\Models\Link;
 use SilverStripe\Control\Director;
 use App\Models\RibbonCta;
 
 class SiteConfigExtension extends Extension
 {
     private static $db = [
-        'HeadScripts'   => 'Text',    // for <head>
-        'BodyScripts'   => 'Text',
-        'FooterScripts'   => 'Text',     // top of <body>, e.g. GTM noscript
         // Global social URLs (used for sameAs and header/footer)
         'Facebook'      => 'Varchar(512)',
         'LinkedIn'      => 'Varchar(512)',
@@ -30,6 +31,11 @@ class SiteConfigExtension extends Extension
     private static $has_one = [
         'SiteLogo'       => Image::class,   // header + Organization schema
         'FooterRibbon'   => RibbonCta::class, // site-wide default; set from the Ribbon CTAs admin
+    ];
+
+    /** Third-party snippets, each tied to a cookie consent group */
+    private static $has_many = [
+        'Scripts' => SiteScript::class,
     ];
 
     public function updateCMSFields(FieldList $fields): void
@@ -49,13 +55,31 @@ class SiteConfigExtension extends Extension
             TextField::create('Instagram', 'Instagram URL'),
             TextField::create('Youtube', 'YouTube URL'),
             TextField::create('Twitter', 'Twitter URL/handle'),
-            // MultiLinkField::create('SocialLinks', 'Additional Social Links'),
         ]);
+        $fields->removeByName('Scripts');
+        $config = GridFieldConfig_RecordEditor::create();
+        $config->addComponent(GridFieldOrderableRows::create('Sort'));
         $fields->addFieldsToTab('Root.Scripts', [
-            TextAreaField::create('HeadScripts', 'Head scripts'),
-            TextAreaField::create('BodyScripts', 'Body scripts'),
-            TextAreaField::create('FooterScripts', 'Footer scripts'),
+            LiteralField::create('ScriptsHelp', '<p class="alert alert-info">' . _t(
+                __CLASS__ . '.ScriptsHelp',
+                'Analytics, tag managers and other third-party snippets. Each one loads only after the visitor accepts its cookie group in the cookie banner.'
+            ) . '</p>'),
+            GridField::create('Scripts', _t(__CLASS__ . '.Scripts', 'Scripts'), $this->getOwner()->Scripts(), $config),
         ]);
+    }
+
+    /**
+     * Rendered scripts for one placement (head, body-start, body-end):
+     * allowed ones as-is, the rest inert until consent (see SiteScript).
+     */
+    public function ScriptsFor(string $placement): DBHTMLText
+    {
+        $html = '';
+        foreach ($this->getOwner()->Scripts()->filter(['Enabled' => true, 'Placement' => $placement]) as $script) {
+            $html .= $script->renderCode() . "\n";
+        }
+
+        return DBField::create_field('HTMLFragment', $html);
     }
 
     /**

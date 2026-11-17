@@ -16,6 +16,7 @@ Page:
     - DNADesign\Elemental\Extensions\ElementalPageExtension
     - Antlion\SilverwindBlocks\Extensions\PageSliderExtension
     - App\Extensions\RibbonCtaExtension
+    - App\Search\BlockSearchExtension
 
 # Ribbon CTA blocks are bands (like Hero/Section): full width by default
 Antlion\SilverwindBlocks\Extensions\ElementStyleExtension:
@@ -31,3 +32,13 @@ Only:
 Antlion\StoreLocation\Pages\StoreLocationPageController:
   extensions:
     - App\Extensions\LocationEnquiryLogExtension
+
+# Keep each page's block text current for site search (App\Search\BlockSearchExtension)
+DNADesign\Elemental\Models\BaseElement:
+  extensions:
+    - App\Search\ElementSearchTextExtension
+
+# Form blocks need a request/session to render and their labels aren't
+# useful search content
+DNADesign\ElementalUserForms\Model\ElementForm:
+  search_indexable: false
