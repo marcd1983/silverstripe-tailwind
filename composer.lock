@@ -130,12 +130,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marcd1983/store-location.git",
-                "reference": "f1148bba0fa7968ce1d7d88297840b9cdd541ec6"
+                "reference": "e77d7f3347c46a1157de20c5fb9af25779cc0dc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marcd1983/store-location/zipball/f1148bba0fa7968ce1d7d88297840b9cdd541ec6",
-                "reference": "f1148bba0fa7968ce1d7d88297840b9cdd541ec6",
+                "url": "https://api.github.com/repos/marcd1983/store-location/zipball/e77d7f3347c46a1157de20c5fb9af25779cc0dc2",
+                "reference": "e77d7f3347c46a1157de20c5fb9af25779cc0dc2",
                 "shasum": ""
             },
             "require": {
@@ -176,7 +176,7 @@
                 "source": "https://github.com/marcd1983/store-location/tree/2.x",
                 "issues": "https://github.com/marcd1983/store-location/issues"
             },
-            "time": "2026-11-16T03:42:46+00:00"
+            "time": "2026-11-17T04:06:18+00:00"
         },
         {
             "name": "colymba/gridfield-bulk-editing-tools",
