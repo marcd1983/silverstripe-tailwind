@@ -1,0 +1,33 @@
+---
+Name: extensions
+---
+SilverStripe\Admin\LeftAndMain:
+  extensions:
+    - App\Extensions\LeftAndMainColorFieldExtension
+
+Silverstripe\SiteConfig\SiteConfig:
+  extensions:
+    - App\Extensions\SiteConfigExtension
+
+Page:
+  extensions:
+    - App\Extensions\PageSEOExtension
+    - App\Extensions\MegaMenuExtension
+    - DNADesign\Elemental\Extensions\ElementalPageExtension
+    - Antlion\SilverwindBlocks\Extensions\PageSliderExtension
+    - App\Extensions\RibbonCtaExtension
+
+# Ribbon CTA blocks are bands (like Hero/Section): full width by default
+Antlion\SilverwindBlocks\Extensions\ElementStyleExtension:
+  default_widths:
+    Elements\ElementRibbonCta: full
+
+---
+Name: app-store-location
+Only:
+  moduleexists: 'antlion/store-location'
+---
+# Keep logging location enquiries to Form Submissions (store-location 2.x hook)
+Antlion\StoreLocation\Pages\StoreLocationPageController:
+  extensions:
+    - App\Extensions\LocationEnquiryLogExtension

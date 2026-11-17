@@ -1,0 +1,3 @@
+[submodule "themes/silverwind"]
+	path = themes/silverwind
+	url = https://github.com/marcd1983/silverwind.git

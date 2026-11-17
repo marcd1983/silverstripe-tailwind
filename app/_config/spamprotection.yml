@@ -1,0 +1,22 @@
+---
+Name: rgvas-spamprotection
+After:
+  - '#nswdpc_recaptchav3_spamprotection'
+---
+
+SilverStripe\SpamProtection\Extension\FormSpamProtectionExtension:
+  default_spam_protector: NSWDPC\SpamProtection\RecaptchaV3SpamProtector
+
+NSWDPC\SpamProtection\TokenResponse:
+  score: 0.5
+
+NSWDPC\SpamProtection\Verifier:
+  secret_key: RECAPTCHA_SECRET_KEY
+
+NSWDPC\SpamProtection\RecaptchaV3Field:
+  site_key: RECAPTCHA_SITE_KEY
+  execute_action: 'submit'
+  auto_create_rule: false
+
+NSWDPC\SpamProtection\RecaptchaV3SpamProtector:
+  badge_display: 'page'

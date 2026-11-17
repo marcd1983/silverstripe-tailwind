@@ -1,0 +1,229 @@
+en:
+  App\Admin\FormSubmissionAdmin:
+    MENUTITLE: 'Form Submissions'
+  App\Admin\PartnersAdmin:
+    MENUTITLE: Partners
+  App\Admin\RibbonCtaAdmin:
+    MENUTITLE: 'Ribbon CTAs'
+  App\Admin\TestimoniesAdmin:
+    MENUTITLE: Testimonies
+  App\Extensions\MegaMenuExtension:
+    db_HideParentCard: 'Hide parent card'
+    db_MegaMenuColumns: 'Mega menu columns'
+    db_MegaMenuLayout: 'Mega menu layout'
+    has_many_Links: Links
+  App\Extensions\RibbonCtaExtension:
+    has_one_RibbonCta: 'Ribbon cta'
+  App\Extensions\SiteConfigExtension:
+    db_BodyScripts: 'Body scripts'
+    db_Facebook: Facebook
+    db_FooterScripts: 'Footer scripts'
+    db_HeadScripts: 'Head scripts'
+    db_Instagram: Instagram
+    db_LinkedIn: 'Linked in'
+    db_Twitter: Twitter
+    db_Youtube: Youtube
+    has_one_SiteLogo: 'Site logo'
+  App\Models\Feature:
+    PLURALNAME: features
+    PLURALS:
+      one: 'A feature'
+      other: '{count} features'
+    SINGULARNAME: feature
+    db_Content: Content
+    db_Title: Title
+    has_many_Links: Links
+    has_one_Image: Image
+  App\Models\FormSubmission:
+    PLURALNAME: 'Form Submissions'
+    PLURALS:
+      one: 'A Form Submission'
+      other: '{count} Form Submissions'
+    SINGULARNAME: 'Form Submission'
+    db_Context: Context
+    db_ContextLink: 'Context link'
+    db_ErrorMessage: 'Error message'
+    db_FormAction: 'Form action'
+    db_FormName: 'Form name'
+    db_Message: Message
+    db_RawData: 'Raw data'
+    db_SentTo: 'Sent to'
+    db_Status: Status
+    db_SubmitterEmail: 'Submitter email'
+    db_SubmitterName: 'Submitter name'
+    db_SubmitterPhone: 'Submitter phone'
+    has_one_Page: Page
+  App\Models\ModalTriggerLink:
+    LINKLABEL: 'Modal trigger'
+    MODAL_ID_DESCRIPTION: 'The ID of the modal to open, shown on that Modal block''s Settings tab (e.g. "modal-23"). A plain number is also accepted.'
+    MODAL_ID_FIELD: 'Modal ID'
+    PLURALNAME: 'Modal triggers'
+    PLURALS:
+      one: 'A Modal trigger'
+      other: '{count} Modal triggers'
+    SINGULARNAME: 'Modal trigger'
+    db_ModalID: 'Modal ID'
+  App\Models\Partner:
+    PLURALNAME: Partners
+    PLURALS:
+      one: 'A Partner'
+      other: '{count} Partners'
+    SINGULARNAME: Partner
+    db_SortOrder: 'Sort order'
+    db_Summary: Summary
+    db_Title: Title
+    has_many_Links: Links
+    has_one_Image: Image
+  App\Models\RibbonCta:
+    PLURALNAME: 'Ribbon Ctas'
+    PLURALS:
+      one: 'A Ribbon Cta'
+      other: '{count} Ribbon Ctas'
+    SINGULARNAME: 'Ribbon Cta'
+    db_BackgroundColor: 'Background color'
+    db_ContainerWidth: 'Container width'
+    db_Description: Description
+    db_EndDate: 'End date'
+    db_GlassEffect: 'Glass effect'
+    db_HideTitle: 'Hide title'
+    db_OverlayColor: 'Overlay color'
+    db_OverlayOpacity: 'Overlay opacity'
+    db_PaddingX: 'Padding X'
+    db_PaddingY: 'Padding Y'
+    db_SortOrder: 'Sort order'
+    db_StartDate: 'Start date'
+    db_Title: Title
+    has_many_Links: Links
+    has_one_BackgroundImage: 'Background image'
+  App\Models\Testimony:
+    PLURALNAME: Testimonies
+    PLURALS:
+      one: 'A Testimony'
+      other: '{count} Testimonies'
+    SINGULARNAME: Testimony
+    db_SortOrder: 'Sort order'
+    db_Testimony: Testimony
+    db_Title: Title
+  BlockPage:
+    PLURALNAME: 'Block Pages'
+    PLURALS:
+      one: 'A Block Page'
+      other: '{count} Block Pages'
+    SINGULARNAME: 'Block Page'
+    db_SidebarPosition: 'Sidebar position'
+    has_one_SidebarElements: 'Sidebar elements'
+  Elements\ElementFeatures:
+    BlockType: Features
+    ContentDescription: 'Optional. Add introductory copy to your features.'
+    ContentLabel: Intro
+    FeaturesLabel: Features
+    PLURALNAME: blocks
+    PLURALS:
+      one: 'A block'
+      other: '{count} blocks'
+    SINGULARNAME: block
+    db_Content: Content
+    many_many_Features: Features
+  Elements\ElementServices:
+    Appearance: Appearance
+    BlockType: Services
+    ContentLabel: Intro
+    PLURALNAME: 'Services Elements'
+    PLURALS:
+      one: 'A Services Element'
+      other: '{count} Services Elements'
+    SINGULARNAME: 'Services Element'
+    ServicesLabel: Services
+    db_Appearance: Appearance
+    db_Autoplay: Autoplay
+    db_AutoplayDelay: 'Autoplay delay'
+    db_CenteredSlides: 'Centered slides'
+    db_Content: Content
+    db_FreeMode: 'Free mode'
+    db_Lazy: Lazy
+    db_Loop: Loop
+    db_MouseWheel: 'Mouse wheel'
+    db_Navigation: Navigation
+    db_Pagination: Pagination
+    db_Scrollbar: Scrollbar
+    db_SlidesPerView: 'Slides per view'
+    db_SlidesPerViewMd: 'Slides per view md'
+    db_SlidesPerViewSm: 'Slides per view sm'
+    db_SpaceBetween: 'Space between'
+    db_Speed: Speed
+    many_many_Services: Services
+  HomePage:
+    PLURALNAME: 'Home Pages'
+    PLURALS:
+      one: 'A Home Page'
+      other: '{count} Home Pages'
+    SINGULARNAME: 'Home Page'
+  Page:
+    CLASS_DESCRIPTION: 'Generic content page'
+    PLURALNAME: Pages
+    PLURALS:
+      one: 'A Page'
+      other: '{count} Pages'
+    SINGULARNAME: Page
+    db_Autoplay: Autoplay
+    db_AutoplayDelay: 'Autoplay delay'
+    db_AutoplayProgress: 'Autoplay progress'
+    db_Canonical: Canonical
+    db_ChangeFrequency: 'Change frequency'
+    db_ChildGridColumns: 'Child grid columns'
+    db_Description: Description
+    db_DesktopHeight: 'Desktop height'
+    db_DesktopWidth: 'Desktop width'
+    db_Effect: Effect
+    db_HideChildren: 'Hide children'
+    db_HidePageTitle: 'Hide page title'
+    db_HideParentCard: 'Hide parent card'
+    db_HideSocial: 'Hide social'
+    db_Lazy: Lazy
+    db_Loop: Loop
+    db_ManualSchema: 'Manual schema'
+    db_Margin: Margin
+    db_MegaMenuColumns: 'Mega menu columns'
+    db_MegaMenuLayout: 'Mega menu layout'
+    db_MetaDescriptionLastEdited: 'Meta description last edited'
+    db_MetaTitle: 'Meta title'
+    db_MetaTitleLastEdited: 'Meta title last edited'
+    db_MobileHeight: 'Mobile height'
+    db_MobileWidth: 'Mobile width'
+    db_Navigation: Navigation
+    db_OGlocale: 'O glocale'
+    db_OGtype: 'O gtype'
+    db_OpenInNew: 'Open in new'
+    db_Pagination: Pagination
+    db_Priority: Priority
+    db_Robots: Robots
+    db_Scrollbar: Scrollbar
+    db_SitemapHide: 'Sitemap hide'
+    db_Speed: Speed
+    db_TwitterCard: 'Twitter card'
+    db_XMLSitemapHide: 'XML sitemap hide'
+    has_many_Links: Links
+    has_many_Slides: Slides
+    has_one_ElementalArea: 'Elemental area'
+    has_one_Photo: Photo
+    has_one_SocialImage: 'Social image'
+    many_many_HeadTags: 'Head tags'
+    many_many_SitemapImages: 'Sitemap images'
+  Services\ServiceHolderPage:
+    PLURALNAME: 'Service Holder Pages'
+    PLURALS:
+      one: 'A Service Holder Page'
+      other: '{count} Service Holder Pages'
+    SINGULARNAME: 'Service Holder Page'
+    db_GridColumn: 'Grid column'
+  Services\ServicePage:
+    PLURALNAME: 'Service Pages'
+    PLURALS:
+      one: 'A Service Page'
+      other: '{count} Service Pages'
+    SINGULARNAME: 'Service Page'
+    db_Featured: Featured
+    db_ShowOnHome: 'Show on home'
+    db_SortOrder: 'Sort order'
+    db_Summary: Summary
+    has_one_ServiceImage: 'Service image'

@@ -1,0 +1,17 @@
+{
+    "_hash": "4bd9371e86afec41c96625cb7b8271dbbfc3433d6cae9d7d4d12f02b6bbc7ed7",
+    "patches": {
+        "innoweb/silverstripe-cookie-consent": [
+            {
+                "package": "innoweb/silverstripe-cookie-consent",
+                "description": "Fix invalid #[Override] attribute on CookiePolicyPageController::Form() - no matching parent method exists in SS6.2, breaks PHP 8.3 attribute validation. No released version (4.x, 5.0.0, 5.1.0/dev-master) is unaffected; remove once upstream ships a fix.",
+                "url": "patches/cookie-consent-invalid-override-attribute.patch",
+                "sha256": "e832a0634a2da8961f01a113d7db897bedac8a49947d7247f2c77bfe6491dd7c",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ]
+    }
+}

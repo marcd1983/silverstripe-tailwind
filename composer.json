@@ -1,0 +1,117 @@
+{
+    "name": "silverstripe/installer",
+    "type": "silverstripe-recipe",
+    "description": "The SilverStripe Framework Installer",
+    "license": "BSD-3-Clause",
+    "require": {
+        "php": "^8.3",
+        "antlion/store-location": "2.x-dev",
+        "antlion/silverwind-settings": "dev-main as 1.0.x-dev",
+        "antlion/silverwind-blocks": "dev-main as 1.0.x-dev",
+        "dnadesign/silverstripe-elemental": "^6.0",
+        "dnadesign/silverstripe-elemental-userforms": "^5.0",
+        "dnadesign/silverstripe-setmenu": "^4.0",
+        "dynamic/silverstripe-elemental-baseobject": "^6.0",
+        "jonom/focuspoint": "^6.0",
+        "nswdpc/silverstripe-recaptcha-v3": "^2.0",
+        "nswdpc/silverstripe-recaptcha-v3-userforms": "^2.0",
+        "plasticstudio/silverstripe-seo": "^6.0",
+        "plasticstudio/silverstripe-seo-ai": "^2.0",
+        "silverstripe/blog": "^5.0",
+        "silverstripe/campaign-admin": "^3.0",
+        "silverstripe/colorpicker": "^1.0@dev",
+        "silverstripe/contentreview": "^6.0",
+        "silverstripe/graphql": "^6.0",
+        "silverstripe/htmleditor-tinymce": "^1.0",
+        "silverstripe/framework": "^6.2.2",
+        "silverstripe/cms": "^6.2.1",
+        "silverstripe/versioned": "^3.2.1",
+        "silverstripe/assets": "^3.1.3",
+        "silverstripe/linkfield": "^5.0",
+        "silverstripe/login-forms": "^6.0",
+        "silverstripe/lumberjack": "^4.0",
+        "silverstripe/mimevalidator": "^4.0",
+        "silverstripe/recipe-cms": "^6.0",
+        "silverstripe/recipe-plugin": "^2.1",
+        "silverstripe/sharedraftcontent": "^4.0",
+        "silverstripe/spamprotection": "^5.0",
+        "silverstripe/tagfield": "^4.0",
+        "silverstripe/textextraction": "^5.0",
+        "silverstripe/userforms": "^7.0",
+        "silverstripe/vendor-plugin": "^3.0",
+        "symbiote/silverstripe-gridfieldextensions": "^5.0",
+        "silverstripe/redirectedurls": "^4.0",
+        "innoweb/silverstripe-cookie-consent": "5.0.0",
+        "undefinedoffset/sortablegridfield": "^3.0",
+        "silvershop/silverstripe-hasonefield": "^5.0",
+        "nswdpc/silverstripe-elemental-image": "^2.0",
+        "dnadesign/silverstripe-elemental-virtual": "^3.0",
+        "tractorcow/silverstripe-colorpicker": "dev-master",
+        "wilr/silverstripe-googlesitemaps": "^4.0",
+        "google/apiclient": "^2.19",
+        "colymba/gridfield-bulk-editing-tools": "^5.0",
+        "dynamic/silverstripe-elemental-embedded-code": "^4.0",
+        "sunnysideup/cms-dark-theme": "*",
+        "cweagans/composer-patches": "^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/marcd1983/silverwind-settings.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/marcd1983/silverwind-blocks.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/marcd1983/store-location.git"
+        }
+    ],
+    "scripts": {
+        "post-install-cmd": [
+            "bash bin/link-local-modules.sh"
+        ],
+        "post-update-cmd": [
+            "bash bin/link-local-modules.sh"
+        ]
+    },
+    "extra": {
+        "project-files-installed": [
+            ".htaccess",
+            "app/.htaccess",
+            "app/_config/mimevalidator.yml",
+            "app/_config/mysite.yml",
+            "app/src/Page.php",
+            "app/src/PageController.php"
+        ],
+        "public-files-installed": [
+            ".htaccess",
+            "index.php",
+            "web.config"
+        ],
+        "patches": {
+            "innoweb/silverstripe-cookie-consent": {
+                "Fix invalid #[Override] attribute on CookiePolicyPageController::Form() - no matching parent method exists in SS6.2, breaks PHP 8.3 attribute validation. No released version (4.x, 5.0.0, 5.1.0/dev-master) is unaffected; remove once upstream ships a fix.": "patches/cookie-consent-invalid-override-attribute.patch"
+            }
+        }
+    },
+    "config": {
+        "process-timeout": 600,
+        "preferred-install": {
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/installers": true,
+            "silverstripe/recipe-plugin": true,
+            "silverstripe/vendor-plugin": true,
+            "php-http/discovery": true,
+            "cweagans/composer-patches": true
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
+}

@@ -1,0 +1,9 @@
+---
+Name: silverstripe-seo-ai
+---
+SilverStripe\Core\Injector\Injector:
+  PlasticStudio\SEOAI\Extensions\SeoAICMSPageEditControllerExtension:
+    properties:
+      openaiKey: "`OPENAI_API_KEY`"
+      model: "gpt-4o-mini"
+      temperature: 0

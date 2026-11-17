@@ -1,0 +1,70 @@
+services:
+  app:
+    build: .docker/
+    container_name: silverstripe_web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - /home/marcus/projects/antlion-modules:/home/marcus/projects/antlion-modules
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    networks:
+      - silverstripe-net
+    command: apache2-foreground
+    env_file:
+      - .env
+
+  db:
+    image: mysql:8.4
+    container_name: silverstripe_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: silverstripe
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - silverstripe-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: silverstripe_pma
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - silverstripe-net
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: silverstripe_mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - silverstripe-net
+
+volumes:
+  db_data:
+
+networks:
+  silverstripe-net:
+    driver: bridge
