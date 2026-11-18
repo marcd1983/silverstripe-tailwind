@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1a74ddae8f973850ed505ad21e000c34",
+    "content-hash": "0d2ad4f8a41bbc0559b6426d25aeb561",
     "packages": [
         {
             "name": "antlion/silverwind-blocks",
@@ -125,21 +125,83 @@
             "time": "2026-11-16T01:51:49+00:00"
         },
         {
+            "name": "antlion/silverwind-site",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marcd1983/silverwind-site.git",
+                "reference": "83cd5be4aa5d3076389c9a7787a517586df74300"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/marcd1983/silverwind-site/zipball/83cd5be4aa5d3076389c9a7787a517586df74300",
+                "reference": "83cd5be4aa5d3076389c9a7787a517586df74300",
+                "shasum": ""
+            },
+            "require": {
+                "antlion/silverwind-blocks": "^1.0@dev",
+                "antlion/silverwind-settings": "^1.0@dev",
+                "dnadesign/silverstripe-elemental": "^6.0",
+                "guzzlehttp/guzzle": "^7.0",
+                "innoweb/silverstripe-cookie-consent": "^5.0",
+                "php": "^8.3",
+                "silverstripe/cms": "^6.0",
+                "silverstripe/linkfield": "^5.0",
+                "symbiote/silverstripe-gridfieldextensions": "^5.0",
+                "unclecheese/display-logic": "^4.0",
+                "undefinedoffset/sortablegridfield": "^3.0"
+            },
+            "suggest": {
+                "antlion/store-location": "Store locations; enquiries are logged to Form Submissions",
+                "dnadesign/silverstripe-elemental-userforms": "The demo seed adds an enquiry form block",
+                "plasticstudio/silverstripe-seo": "SEO fields alongside the structured data"
+            },
+            "default-branch": true,
+            "type": "silverstripe-vendormodule",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Antlion\\SilverwindSite\\": "src/",
+                    "Antlion\\SilverwindSite\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Site features for Silverwind sites: services, ribbon CTAs, testimonials and partners blocks, consent-gated scripts, block search, SEO structured data, security headers and a demo seed",
+            "keywords": [
+                "elemental",
+                "silverstripe",
+                "silverwind",
+                "tailwind"
+            ],
+            "support": {
+                "source": "https://github.com/marcd1983/silverwind-site/tree/main",
+                "issues": "https://github.com/marcd1983/silverwind-site/issues"
+            },
+            "time": "2026-11-17T07:13:51+00:00"
+        },
+        {
             "name": "antlion/store-location",
             "version": "2.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marcd1983/store-location.git",
-                "reference": "e77d7f3347c46a1157de20c5fb9af25779cc0dc2"
+                "reference": "ff8e289cc8350552340eb08c9d4b33118f192ce7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marcd1983/store-location/zipball/e77d7f3347c46a1157de20c5fb9af25779cc0dc2",
-                "reference": "e77d7f3347c46a1157de20c5fb9af25779cc0dc2",
+                "url": "https://api.github.com/repos/marcd1983/store-location/zipball/ff8e289cc8350552340eb08c9d4b33118f192ce7",
+                "reference": "ff8e289cc8350552340eb08c9d4b33118f192ce7",
                 "shasum": ""
             },
             "require": {
                 "dnadesign/silverstripe-elemental": "^6.0",
+                "guzzlehttp/guzzle": "^7.0",
                 "php": "^8.3",
                 "silverstripe/cms": "^6.0",
                 "silverstripe/framework": "^6.0",
@@ -155,7 +217,10 @@
             "extra": {
                 "branch-alias": {
                     "dev-2.x": "2.x-dev"
-                }
+                },
+                "expose": [
+                    "client"
+                ]
             },
             "autoload": {
                 "psr-4": {
@@ -176,7 +241,7 @@
                 "source": "https://github.com/marcd1983/store-location/tree/2.x",
                 "issues": "https://github.com/marcd1983/store-location/issues"
             },
-            "time": "2026-11-17T04:06:18+00:00"
+            "time": "2026-11-17T07:05:44+00:00"
         },
         {
             "name": "colymba/gridfield-bulk-editing-tools",
@@ -11099,12 +11164,19 @@
             "version": "dev-main",
             "alias": "1.0.x-dev",
             "alias_normalized": "1.0.9999999.9999999-dev"
+        },
+        {
+            "package": "antlion/silverwind-site",
+            "version": "dev-main",
+            "alias": "1.0.x-dev",
+            "alias_normalized": "1.0.9999999.9999999-dev"
         }
     ],
     "minimum-stability": "dev",
     "stability-flags": {
         "antlion/silverwind-blocks": 20,
         "antlion/silverwind-settings": 20,
+        "antlion/silverwind-site": 20,
         "antlion/store-location": 20,
         "silverstripe/colorpicker": 20,
         "tractorcow/silverstripe-colorpicker": 20
