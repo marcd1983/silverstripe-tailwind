@@ -36,7 +36,7 @@ $cfg->setOption('menubar', 'edit view insert format tools table help');
 
 // One group per row: separators ('|') split the toolbar into button groups
 $cfg->setButtonsForLine(1, [
-    'blocks', 'styles', '|',
+    'styles', '|', // one dropdown: block types + the custom styles below
     'bold', 'italic', 'underline', 'strikethrough', 'forecolor', 'backcolor', 'removeformat', '|',
     'bullist', 'numlist', 'outdent', 'indent', '|',
     'alignleft', 'aligncenter', 'alignright', 'alignjustify',
@@ -51,7 +51,7 @@ $cfg->setButtonsForLine(2, [
 ]);
 
 // Quickbars (contextual toolbars on selection / at caret)
-$cfg->setOption('quickbars_selection_toolbar', 'bold italic underline | forecolor backcolor | sslink | blocks | removeformat');
+$cfg->setOption('quickbars_selection_toolbar', 'bold italic underline | forecolor backcolor | sslink | styles | removeformat');
 $cfg->setOption('quickbars_insert_toolbar', 'quicktable ssmedia ssembed accordion codesample hr');
 $cfg->setOption('quickbars_image_toolbar', false); // ssmedia has its own image dialog
 
@@ -100,7 +100,21 @@ $cfg->setOption('extended_valid_elements', implode(',', [
 // database, so Tailwind can't discover them by scanning templates).
 $cfg->setContentCSS(['/_resources/themes/silverwind/dist/editor.css']);
 
+// Block types for Format > Blocks. No Heading 1: the page title is the h1.
+$blockFormats = [
+    ['title' => 'Paragraph', 'format' => 'p'],
+    ['title' => 'Heading 2', 'format' => 'h2'],
+    ['title' => 'Heading 3', 'format' => 'h3'],
+    ['title' => 'Heading 4', 'format' => 'h4'],
+    ['title' => 'Quote', 'format' => 'blockquote'],
+];
+$cfg->setOption('block_formats', implode('; ', array_map(
+    fn ($f) => $f['title'] . '=' . $f['format'],
+    $blockFormats
+)));
+
 $cfg->setOption('style_formats', [
+    ['title' => 'Text', 'items' => $blockFormats],
     [
         'title' => 'Text color',
         'items' => [
