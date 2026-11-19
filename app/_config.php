@@ -15,39 +15,61 @@ date_default_timezone_set(Environment::getEnv('SS_TIMEZONE') ?: 'America/Chicago
 FulltextSearchable::enable();
 
 
+/** @var TinyMCEConfig $cfg */
 $cfg = TinyMCEConfig::get('cms');
 
-// $plugins = [
-//     // content & editing
-//     'advlist', 'lists', 'autolink', 'autosave', 'autoresize', 'code', 'codesample',
-//     'charmap', 'directionality', 'emoticons', 'help', 'image', 'importcss',
-//     'insertdatetime', 'media', 'nonbreaking', 'pagebreak', 'preview',
-//     'quickbars', 'save', 'searchreplace', 'table', 'visualblocks', 'visualchars', 'wordcount',
-//     'anchor', 'fullscreen',
-// ];
+// Every open-source plugin bundled with Silverstripe's TinyMCE (6.8) that
+// suits CMS content. Silverstripe already enables anchor, table, emoticons,
+// code, image, importcss, lists, autolink, searchreplace, visualblocks,
+// wordcount and help, plus its own sslink/ssmedia/ssembed. Left out on
+// purpose: link and media (sslink/ssembed replace them), save (the CMS has
+// its own), autoresize (fights the CMS editor height), autosave (the CMS
+// tracks unsaved changes and versions), template (removed in TinyMCE 7) and
+// pagebreak (a print feature; inserts a comment that means nothing on the web).
+$cfg->enablePlugins([
+    'accordion', 'advlist', 'charmap', 'codesample', 'directionality', 'fullscreen',
+    'insertdatetime', 'nonbreaking', 'preview', 'quickbars', 'visualchars',
+]);
 
-// $cfg->enablePlugins($plugins);
-
-// Menubar + toolbars (you can tweak order)
-// $cfg->setOption('menubar', 'file edit view insert format tools table help');
+// Full menu bar: everything, including what isn't on the toolbars
+$cfg->setOption('menubar', 'edit view insert format tools table help');
 
 // One group per row: separators ('|') split the toolbar into button groups
 $cfg->setButtonsForLine(1, [
-    'bold', 'italic', 'underline', 'strikethrough', '|',
-    'forecolor', 'backcolor', '|',
+    'blocks', 'styles', '|',
+    'bold', 'italic', 'underline', 'strikethrough', 'forecolor', 'backcolor', 'removeformat', '|',
     'bullist', 'numlist', 'outdent', 'indent', '|',
-    'alignleft', 'aligncenter', 'alignright', 'alignjustify', '|',
+    'alignleft', 'aligncenter', 'alignright', 'alignjustify',
 ]);
 
 $cfg->setButtonsForLine(2, [
-    'blocks styles', 'table', 'sslink', 'unlink', 'ssmedia', 'ssembed', '|',
-    'emoticons', 'pagebreak', 'nonbreaking', '|',
-    'code', 'preview', 'removeformat', 'visualblocks', 'visualchars', 'searchreplace', 'fullscreen', 'help',
+    'sslink', 'unlink', 'anchor', '|',
+    'ssmedia', 'ssembed', 'table', 'accordion', 'codesample', '|',
+    'charmap', 'emoticons', 'nonbreaking', 'insertdatetime', '|',
+    'ltr', 'rtl', '|',
+    'searchreplace', 'visualblocks', 'visualchars', 'code', 'preview', 'fullscreen', 'help',
 ]);
 
 // Quickbars (contextual toolbars on selection / at caret)
-$cfg->setOption('quickbars_selection_toolbar', 'bold italic underline | forecolor backcolor | link | removeformat');
-$cfg->setOption('quickbars_insert_toolbar', 'quicktable image media');
+$cfg->setOption('quickbars_selection_toolbar', 'bold italic underline | forecolor backcolor | sslink | blocks | removeformat');
+$cfg->setOption('quickbars_insert_toolbar', 'quicktable ssmedia ssembed accordion codesample hr');
+$cfg->setOption('quickbars_image_toolbar', false); // ssmedia has its own image dialog
+
+// Plugin settings
+$cfg->setOption('codesample_languages', [
+    ['text' => 'HTML/XML', 'value' => 'markup'],
+    ['text' => 'CSS', 'value' => 'css'],
+    ['text' => 'JavaScript', 'value' => 'javascript'],
+    ['text' => 'PHP', 'value' => 'php'],
+    ['text' => 'Shell', 'value' => 'bash'],
+    ['text' => 'JSON', 'value' => 'json'],
+    ['text' => 'Plain text', 'value' => 'none'],
+]);
+$cfg->setOption('insertdatetime_formats', ['%B %e, %Y', '%m/%d/%Y', '%I:%M %p', '%Y-%m-%d']);
+$cfg->setOption('insertdatetime_element', true); // wraps dates in <time datetime="...">
+$cfg->setOption('nonbreaking_wrap', false);      // plain &nbsp;, no editor-only wrapper span
+$cfg->setOption('advlist_bullet_styles', 'default,circle,square');
+$cfg->setOption('advlist_number_styles', 'default,lower-alpha,upper-alpha,lower-roman,upper-roman');
 
 // Useful editor options
 $cfg->setOption('image_caption', true);
@@ -58,8 +80,20 @@ $cfg->setOption('statusbar', true);
 $cfg->setOption('elementpath', true);
 $cfg->setOption('resize', true);
 
-// Keep the HTML you want (allow spans/mark/classes, etc.)
-$cfg->setOption('extended_valid_elements', 'div[class|style],span[class|style],mark[class|style],a[class|href|target|rel],p[class],h1[class],h2[class],h3[class],img[id|loading|src|alt|title|width|height|class],table[*],tr[*],td[*],th[*]');
+// Additions to Silverstripe's default allow-list (also enforced when saving).
+// An entry here REPLACES the default rule for that element, so only list
+// elements the defaults lack, or a default rule with attributes added (img:
+// + loading). p, a, h1-h6, div, span and table cells are already allowed with
+// more attributes (id for anchors, dir, style) than a redefinition would keep.
+// Never use [*]: it lets event handlers (onclick...) through the save filter.
+$cfg->setOption('extended_valid_elements', implode(',', [
+    'mark[class|style]',
+    'img[id|dir|longdesc|usemap|class|src|border|alt=|title|hspace|vspace|width|height|align|name|data*|loading]',
+    // Markup from the plugins above: accordion, codesample, insertdatetime,
+    // image captions, advlist list styles
+    'details[class|open],summary[class],code[class],time[datetime|class]',
+    'figure[class|style],figcaption[class],ul[class|style],ol[class|style]',
+]));
 
 // Content CSS + "Styles" menu use the silverwind theme. Its classes are
 // safelisted in the theme's src/css/theme.css (editor content lives in the
